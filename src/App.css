@@ -1,0 +1,20 @@
+/* Reset for full page workflow editor */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Ensure React Flow takes full space */
+.react-flow {
+  height: 100%;
+  width: 100%;
+}
