@@ -1,44 +1,44 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Handle, Position } from "reactflow";
 
-interface RotationNodeProps {
+interface ResizeNodeProps {
   data: {
     label: string;
     deleteNode?: (nodeId: string) => void;
-    onRotationChange?: (value: number) => void;
-    rotation?: number;
+    onScaleChange?: (value: number) => void;
+    scale?: number;
   };
   id: string;
 }
 
-const RotationNode: React.FC<RotationNodeProps> = ({ data, id }) => {
-  const [rotationValue, setRotationValue] = useState(data.rotation || 0);
+const ResizeNode: React.FC<ResizeNodeProps> = ({ data, id }) => {
+  const [scale, setScale] = useState(data.scale || 100);
 
-  // Update parent when rotation changes
+  // Update parent when scale changes
   useEffect(() => {
-    if (data.onRotationChange) {
-      data.onRotationChange(rotationValue);
+    if (data.onScaleChange) {
+      data.onScaleChange(scale);
     }
-  }, [rotationValue, data.onRotationChange]);
+  }, [scale, data.onScaleChange]);
 
   // Update local state when prop changes
   useEffect(() => {
-    if (data.rotation !== undefined) {
-      setRotationValue(data.rotation);
+    if (data.scale !== undefined) {
+      setScale(data.scale);
     }
-  }, [data.rotation]);
+  }, [data.scale]);
 
   return (
-    <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-blue-300 w-64">
+    <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-green-300 w-64">
       <Handle
         type="target"
         position={Position.Left}
-        className="w-3 h-3 bg-blue-500"
+        className="w-3 h-3 bg-green-500"
       />
       <div className="flex flex-col">
-        <div className="text-lg font-bold text-blue-800 mb-2 flex items-center justify-between">
+        <div className="text-lg font-bold text-green-800 mb-2 flex items-center justify-between">
           <div className="flex items-center">
-            <span className="mr-2">🔄</span>
+            <span className="mr-2">📏</span>
             {data.label}
           </div>
           {data.deleteNode && (
@@ -52,37 +52,37 @@ const RotationNode: React.FC<RotationNodeProps> = ({ data, id }) => {
           )}
         </div>
 
-        <label htmlFor="rotation" className="text-sm font-medium text-gray-600">
-          Rotation: {rotationValue}°
+        <label htmlFor="scale" className="text-sm font-medium text-gray-600">
+          Scale: {scale}%
         </label>
         <input
           type="range"
-          id="rotation"
-          min="0"
-          max="360"
-          value={rotationValue}
-          onChange={(e) => setRotationValue(Number(e.target.value))}
+          id="scale"
+          min="10"
+          max="300"
+          value={scale}
+          onChange={(e) => setScale(Number(e.target.value))}
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
         />
 
         <div className="flex justify-between mt-2">
           <button
-            onClick={() => setRotationValue(90)}
+            onClick={() => setScale(50)}
             className="text-xs p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           >
-            90°
+            Small
           </button>
           <button
-            onClick={() => setRotationValue(180)}
+            onClick={() => setScale(100)}
             className="text-xs p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           >
-            180°
+            Normal
           </button>
           <button
-            onClick={() => setRotationValue(270)}
+            onClick={() => setScale(200)}
             className="text-xs p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           >
-            270°
+            Large
           </button>
         </div>
 
@@ -94,10 +94,10 @@ const RotationNode: React.FC<RotationNodeProps> = ({ data, id }) => {
       <Handle
         type="source"
         position={Position.Right}
-        className="w-3 h-3 bg-blue-500"
+        className="w-3 h-3 bg-green-500"
       />
     </div>
   );
 };
 
-export default RotationNode;
+export default ResizeNode;

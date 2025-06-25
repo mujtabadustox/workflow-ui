@@ -1,44 +1,46 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Handle, Position } from "reactflow";
 
-interface RotationNodeProps {
+interface SaturationNodeProps {
   data: {
     label: string;
     deleteNode?: (nodeId: string) => void;
-    onRotationChange?: (value: number) => void;
-    rotation?: number;
+    onSaturationChange?: (value: number) => void;
+    saturation?: number;
   };
   id: string;
 }
 
-const RotationNode: React.FC<RotationNodeProps> = ({ data, id }) => {
-  const [rotationValue, setRotationValue] = useState(data.rotation || 0);
+const SaturationNode: React.FC<SaturationNodeProps> = ({ data, id }) => {
+  const [saturationValue, setSaturationValue] = useState(
+    data.saturation || 100
+  );
 
-  // Update parent when rotation changes
+  // Update parent when saturation changes
   useEffect(() => {
-    if (data.onRotationChange) {
-      data.onRotationChange(rotationValue);
+    if (data.onSaturationChange) {
+      data.onSaturationChange(saturationValue);
     }
-  }, [rotationValue, data.onRotationChange]);
+  }, [saturationValue, data.onSaturationChange]);
 
   // Update local state when prop changes
   useEffect(() => {
-    if (data.rotation !== undefined) {
-      setRotationValue(data.rotation);
+    if (data.saturation !== undefined) {
+      setSaturationValue(data.saturation);
     }
-  }, [data.rotation]);
+  }, [data.saturation]);
 
   return (
-    <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-blue-300 w-64">
+    <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-pink-300 w-64">
       <Handle
         type="target"
         position={Position.Left}
-        className="w-3 h-3 bg-blue-500"
+        className="w-3 h-3 bg-pink-500"
       />
       <div className="flex flex-col">
-        <div className="text-lg font-bold text-blue-800 mb-2 flex items-center justify-between">
+        <div className="text-lg font-bold text-pink-800 mb-2 flex items-center justify-between">
           <div className="flex items-center">
-            <span className="mr-2">🔄</span>
+            <span className="mr-2">🎨</span>
             {data.label}
           </div>
           {data.deleteNode && (
@@ -52,37 +54,40 @@ const RotationNode: React.FC<RotationNodeProps> = ({ data, id }) => {
           )}
         </div>
 
-        <label htmlFor="rotation" className="text-sm font-medium text-gray-600">
-          Rotation: {rotationValue}°
+        <label
+          htmlFor="saturation"
+          className="text-sm font-medium text-gray-600"
+        >
+          Saturation: {saturationValue}%
         </label>
         <input
           type="range"
-          id="rotation"
+          id="saturation"
           min="0"
-          max="360"
-          value={rotationValue}
-          onChange={(e) => setRotationValue(Number(e.target.value))}
+          max="200"
+          value={saturationValue}
+          onChange={(e) => setSaturationValue(Number(e.target.value))}
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
         />
 
         <div className="flex justify-between mt-2">
           <button
-            onClick={() => setRotationValue(90)}
+            onClick={() => setSaturationValue(50)}
             className="text-xs p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           >
-            90°
+            Muted
           </button>
           <button
-            onClick={() => setRotationValue(180)}
+            onClick={() => setSaturationValue(100)}
             className="text-xs p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           >
-            180°
+            Normal
           </button>
           <button
-            onClick={() => setRotationValue(270)}
+            onClick={() => setSaturationValue(150)}
             className="text-xs p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           >
-            270°
+            Vibrant
           </button>
         </div>
 
@@ -94,10 +99,10 @@ const RotationNode: React.FC<RotationNodeProps> = ({ data, id }) => {
       <Handle
         type="source"
         position={Position.Right}
-        className="w-3 h-3 bg-blue-500"
+        className="w-3 h-3 bg-pink-500"
       />
     </div>
   );
 };
 
-export default RotationNode;
+export default SaturationNode;

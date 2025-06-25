@@ -1,39 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Handle, Position } from "reactflow";
 
 interface GrayscaleNodeProps {
   data: {
     label: string;
-    inputImage?: string;
     deleteNode?: (nodeId: string) => void;
+    onGrayscaleChange?: (value: number) => void;
+    grayscale?: number;
   };
   id: string;
 }
 
 const GrayscaleNode: React.FC<GrayscaleNodeProps> = ({ data, id }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [outputImage, setOutputImage] = useState("");
-  const [intensity, setIntensity] = useState(50);
+  const [intensity, setIntensity] = useState(data.grayscale || 0);
 
-  const processImage = () => {
-    if (!data.inputImage) return;
-
-    setIsProcessing(true);
-
-    // Simulate processing delay
-    setTimeout(() => {
-      // In a real app, you'd use Canvas API to apply grayscale filter
-      // For now, we'll just use the same image with CSS filter simulation
-      setOutputImage(data.inputImage || "");
-      setIsProcessing(false);
-    }, 1000);
-  };
-
+  // Update parent when intensity changes
   useEffect(() => {
-    if (data.inputImage) {
-      processImage();
+    if (data.onGrayscaleChange) {
+      data.onGrayscaleChange(intensity);
     }
-  }, [data.inputImage, intensity]);
+  }, [intensity, data.onGrayscaleChange]);
+
+  // Update local state when prop changes
+  useEffect(() => {
+    if (data.grayscale !== undefined) {
+      setIntensity(data.grayscale);
+    }
+  }, [data.grayscale]);
 
   return (
     <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-gray-300 w-64">
@@ -58,6 +51,7 @@ const GrayscaleNode: React.FC<GrayscaleNodeProps> = ({ data, id }) => {
             </button>
           )}
         </div>
+
         <label
           htmlFor="intensity"
           className="text-sm font-medium text-gray-600"
@@ -73,7 +67,12 @@ const GrayscaleNode: React.FC<GrayscaleNodeProps> = ({ data, id }) => {
           onChange={(e) => setIntensity(Number(e.target.value))}
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
         />
+
+        <div className="mt-2 text-sm text-green-600">
+          ✅ Live preview active
+        </div>
       </div>
+
       <Handle
         type="source"
         position={Position.Right}

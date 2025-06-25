@@ -1,28 +1,24 @@
-import React, { useState, useCallback } from "react";
-import { Handle, Position, useReactFlow, useEdges, type Edge } from "reactflow";
+import React from "react";
+import { Handle, Position } from "reactflow";
 
 interface ImagePreviewNodeProps {
   data: {
     label: string;
     deleteNode?: (nodeId: string) => void;
+    uploadedImage?: string | null;
+    showImage?: boolean;
+    brightness?: number;
+    contrast?: number;
+    grayscale?: number;
+    saturation?: number;
+    rotation?: number;
+    blur?: number;
+    scale?: number;
   };
   id: string;
 }
 
 const ImagePreviewNode: React.FC<ImagePreviewNodeProps> = ({ data, id }) => {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedImageUrl, setGeneratedImageUrl] = useState("");
-
-  const handleGenerate = () => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      setGeneratedImageUrl(
-        `https://via.placeholder.com/300x250/7C3AED/FFFFFF?text=Final+Image`
-      );
-      setIsGenerating(false);
-    }, 2000);
-  };
-
   return (
     <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-purple-200 min-w-80">
       <Handle
@@ -45,34 +41,33 @@ const ImagePreviewNode: React.FC<ImagePreviewNodeProps> = ({ data, id }) => {
           )}
         </div>
 
-        <div className="w-full h-48 border-2 border-dashed border-gray-300 rounded flex items-center justify-center bg-gray-50 mb-3">
-          {generatedImageUrl ? (
+        <div className="w-full h-64 border-2 border-dashed border-gray-300 rounded flex items-center justify-center bg-gray-50">
+          {data.uploadedImage && data.showImage ? (
             <img
-              src={generatedImageUrl}
-              alt="Generated"
+              src={data.uploadedImage}
+              alt="Live Preview"
               className="max-w-full max-h-full object-contain"
+              style={{
+                filter: `brightness(${data.brightness || 100}%) contrast(${
+                  data.contrast || 100
+                }%) grayscale(${data.grayscale || 0}%) saturate(${
+                  data.saturation || 100
+                }%) blur(${data.blur || 0}px)`,
+                transform: `rotate(${data.rotation || 0}deg) scale(${
+                  (data.scale || 100) / 100
+                })`,
+              }}
             />
           ) : (
             <span className="text-gray-400 text-sm">
-              {isGenerating ? "⏳ Generating..." : "Click Generate"}
+              {data.uploadedImage
+                ? "Click Generate to see preview"
+                : "Upload an image to see preview"}
             </span>
           )}
         </div>
-
-        <button
-          onClick={handleGenerate}
-          disabled={isGenerating}
-          className={`w-full py-2 px-3 rounded text-sm font-medium transition-colors ${
-            isGenerating
-              ? "bg-gray-400"
-              : "bg-purple-600 hover:bg-purple-700 text-white"
-          }`}
-        >
-          {isGenerating
-            ? "⏳ Generating Final Image..."
-            : "🚀 Generate Final Image"}
-        </button>
       </div>
+
       <Handle
         type="source"
         position={Position.Right}
